@@ -68,7 +68,7 @@ Google Spreadsheet に以下4シートを作成します。
 
 ### 環境変数
 
-`.env.local` を作成:
+`.env.example` を元に `.env.local` を作成:
 
 ```env
 GAS_WEB_APP_URL=https://script.google.com/macros/s/xxxxxxxx/exec
@@ -115,3 +115,7 @@ npm run dev
 - GAS側で `LockService` による排他（`create`, `admin_block`）
 - 取消は予約IDベース（将来はトークン式に拡張推奨）
 - 管理認可は `adminKey`（将来はOAuth推奨）
+
+## 7. 移植
+
+別 Google アカウント、別 Git リポジトリ、別 Vercel への移行手順は `MIGRATION.md` を参照してください。
