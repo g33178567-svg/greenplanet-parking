@@ -53,6 +53,8 @@ git push -u origin main
 
 `gas/appsscript.json` は clasp で管理する場合や、Apps Script の manifest を明示的に編集したい場合だけ使います。Apps Script エディタ上で移植するだけなら無理に触る必要はありません。
 
+`gas/Code.gs` を反映したあと、Apps Script エディタで `setupProject()` を 1 回実行してください。これで `Slots`、`Reservations`、`Settings`、`Logs` の各シートと初期ヘッダが自動作成されます。
+
 ### Settings シート
 
 `Settings` シートに少なくとも次の値を設定します。

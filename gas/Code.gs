@@ -5,6 +5,52 @@ const SHEET_SETTINGS = 'Settings';
 const SHEET_LOGS = 'Logs';
 const FIXED_TIME_STEP_MIN = 30;
 const DEFAULT_ADMIN_KEY = 'admin1234';
+const SLOT_HEADERS = ['slotId', 'name', 'isActive'];
+const RESERVATION_HEADERS = ['id', 'slotId', 'startAt', 'endAt', 'status', 'name', 'contact', 'roomNumber', 'note', 'createdAt', 'canceledAt', 'createdBy', 'updatedAt'];
+const SETTINGS_HEADERS = ['key', 'value'];
+const LOG_HEADERS = ['id', 'at', 'actor', 'action', 'payloadJson'];
+const DEFAULT_SETTINGS_ROWS = [
+  ['SLOT_COUNT', '16'],
+  ['TIME_STEP_MIN', String(FIXED_TIME_STEP_MIN)],
+  ['RESERVABLE_DAYS_AHEAD', '30'],
+  ['MIN_DURATION_MIN', '30'],
+  ['MAX_DURATION_MIN', '1440'],
+  ['CANCEL_DEADLINE_MIN', '0'],
+  ['ADMIN_KEY', DEFAULT_ADMIN_KEY]
+];
+
+function setupProject() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('Open this script from a spreadsheet-bound Apps Script project');
+  }
+
+  const slotsSheet = ensureInitializedSheet_(ss, SHEET_SLOTS, SLOT_HEADERS);
+  if (slotsSheet.getLastRow() <= 1) {
+    const slotRows = [];
+    for (let i = 1; i <= 16; i++) {
+      slotRows.push([i, `枠${i}`, true]);
+    }
+    slotsSheet.getRange(2, 1, slotRows.length, slotRows[0].length).setValues(slotRows);
+  }
+
+  ensureInitializedSheet_(ss, SHEET_RESERVATIONS, RESERVATION_HEADERS);
+
+  const settingsSheet = ensureInitializedSheet_(ss, SHEET_SETTINGS, SETTINGS_HEADERS);
+  if (settingsSheet.getLastRow() <= 1) {
+    settingsSheet.getRange(2, 1, DEFAULT_SETTINGS_ROWS.length, DEFAULT_SETTINGS_ROWS[0].length).setValues(DEFAULT_SETTINGS_ROWS);
+  }
+
+  ensureInitializedSheet_(ss, SHEET_LOGS, LOG_HEADERS);
+
+  return {
+    ok: true,
+    message: 'Project sheets initialized',
+    sheetNames: ss.getSheets().map(function (sheet) {
+      return sheet.getName();
+    })
+  };
+}
 
 function doGet(e) {
   return handleRequest_('GET', e);
@@ -491,6 +537,19 @@ function readSheetObjects_(sheet) {
     out.push(row);
   }
   return out;
+}
+
+function ensureInitializedSheet_(ss, name, headers) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+  }
+
+  if (sheet.getLastRow() <= 1) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  }
+
+  return sheet;
 }
 
 function setCellByHeader_(sheet, rowIndex, headerName, value) {

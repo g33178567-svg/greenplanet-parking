@@ -57,10 +57,11 @@ Google Spreadsheet に以下4シートを作成します。
 ## 2. GAS デプロイ（clasp）
 
 1. Spreadsheet を開き、拡張機能から Apps Script を開く  
-2. `gas/Code.gs`, `gas/appsscript.json` の内容を反映  
-3. デプロイ > 新しいデプロイ > 種類: ウェブアプリ
-4. アクセス: `全員`、実行ユーザー: `自分`
-5. 発行された `/exec` URL を控える
+2. `gas/Code.gs` の内容を反映  
+3. Apps Script エディタで `setupProject()` を 1 回実行して、必要なシートと初期ヘッダを作成
+4. デプロイ > 新しいデプロイ > 種類: ウェブアプリ
+5. アクセス: `全員`、実行ユーザー: `自分`
+6. 発行された `/exec` URL を控える
 
 `ADMIN_KEY` は `Settings` シート、または Script Properties の `ADMIN_KEY` で管理できます。どちらも未設定の場合は `admin1234` を使います。
 
