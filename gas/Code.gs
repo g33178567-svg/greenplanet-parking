@@ -5,6 +5,7 @@ const SHEET_SETTINGS = 'Settings';
 const SHEET_LOGS = 'Logs';
 const FIXED_TIME_STEP_MIN = 30;
 const DEFAULT_ADMIN_KEY = 'admin1234';
+const SPREADSHEET_ID_PROPERTY = 'SPREADSHEET_ID';
 const SLOT_HEADERS = ['slotId', 'name', 'isActive'];
 const RESERVATION_HEADERS = ['id', 'slotId', 'startAt', 'endAt', 'status', 'name', 'contact', 'roomNumber', 'note', 'createdAt', 'canceledAt', 'createdBy', 'updatedAt'];
 const SETTINGS_HEADERS = ['key', 'value'];
@@ -20,11 +21,19 @@ const DEFAULT_SETTINGS_ROWS = [
 ];
 
 function setupProject() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (!ss) {
-    throw new Error('Open this script from a spreadsheet-bound Apps Script project');
-  }
+  return setupProjectForSpreadsheet_(getSpreadsheet_());
+}
 
+function setupProjectBySpreadsheetId(spreadsheetId) {
+  const id = (spreadsheetId || '').toString().trim();
+  if (!id) {
+    throw new Error('spreadsheetId is required');
+  }
+  PropertiesService.getScriptProperties().setProperty(SPREADSHEET_ID_PROPERTY, id);
+  return setupProjectForSpreadsheet_(SpreadsheetApp.openById(id));
+}
+
+function setupProjectForSpreadsheet_(ss) {
   const slotsSheet = ensureInitializedSheet_(ss, SHEET_SLOTS, SLOT_HEADERS);
   if (slotsSheet.getLastRow() <= 1) {
     const slotRows = [];
@@ -154,6 +163,28 @@ function getAdminKey_() {
   return settings.ADMIN_KEY || PropertiesService.getScriptProperties().getProperty('ADMIN_KEY') || DEFAULT_ADMIN_KEY;
 }
 
+function getSpreadsheet_() {
+  try {
+    const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    if (activeSpreadsheet) {
+      return activeSpreadsheet;
+    }
+  } catch (_err) {
+    // Ignore and fall back to configured spreadsheet ID.
+  }
+
+  const spreadsheetId = PropertiesService.getScriptProperties().getProperty(SPREADSHEET_ID_PROPERTY);
+  if (!spreadsheetId) {
+    throw appError_('INTERNAL', `Spreadsheet is not configured. Bind the script to a spreadsheet or set ${SPREADSHEET_ID_PROPERTY}.`);
+  }
+
+  try {
+    return SpreadsheetApp.openById(spreadsheetId);
+  } catch (_err) {
+    throw appError_('INTERNAL', `Spreadsheet could not be opened for ${SPREADSHEET_ID_PROPERTY}.`);
+  }
+}
+
 function getAvailability_(dateStr) {
   const date = parseDateOnly_(dateStr);
   const dayStart = startOfDay_(date);
@@ -221,7 +252,7 @@ function cancelReservation_(input, actorType) {
   if (!id) {
     throw appError_('VALIDATION_ERROR', 'id is required');
   }
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName(SHEET_RESERVATIONS);
   if (!sheet) {
     throw appError_('INTERNAL', 'Reservations sheet not found');
@@ -512,7 +543,7 @@ function getSettings_() {
 }
 
 function getRequiredSheet_(name) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
     throw appError_('INTERNAL', `Sheet not found: ${name}`);

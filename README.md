@@ -58,10 +58,11 @@ Google Spreadsheet に以下4シートを作成します。
 
 1. Spreadsheet を開き、拡張機能から Apps Script を開く  
 2. `gas/Code.gs` の内容を反映  
-3. Apps Script エディタで `setupProject()` を 1 回実行して、必要なシートと初期ヘッダを作成
-4. デプロイ > 新しいデプロイ > 種類: ウェブアプリ
-5. アクセス: `全員`、実行ユーザー: `自分`
-6. 発行された `/exec` URL を控える
+3. Spreadsheet にバインドした Apps Script なら `setupProject()` を 1 回実行して、必要なシートと初期ヘッダを作成
+4. スタンドアロン Apps Script の場合は `setupProjectBySpreadsheetId('スプレッドシートID')` を 1 回実行
+5. デプロイ > 新しいデプロイ > 種類: ウェブアプリ
+6. アクセス: `全員`、実行ユーザー: `自分`
+7. 発行された `/exec` URL を控える
 
 `ADMIN_KEY` は `Settings` シート、または Script Properties の `ADMIN_KEY` で管理できます。どちらも未設定の場合は `admin1234` を使います。
 

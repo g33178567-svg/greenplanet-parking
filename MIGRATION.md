@@ -18,7 +18,7 @@
 - 新 Google アカウント側で Spreadsheet を新規作成するか、既存 Spreadsheet をコピーするか
 - Git の履歴をそのまま残すか
 
-この構成では Apps Script が Spreadsheet に紐づく前提なので、最も安全なのは新 Google アカウント側で Spreadsheet を用意し、その Spreadsheet から Apps Script を開いて `gas/Code.gs` を反映するやり方です。
+この構成では Spreadsheet にバインドした Apps Script が最も安全です。ただしスタンドアロン Apps Script でも `SPREADSHEET_ID` を設定すれば動かせます。
 
 ## 1. Git リポジトリ移行
 
@@ -47,13 +47,18 @@ git push -u origin main
 
 ### Apps Script
 
-新 Google アカウントで対象 Spreadsheet を開き、`拡張機能 > Apps Script` からコンテナバインドされた Apps Script を作成します。
+新 Google アカウントで対象 Spreadsheet を開き、`拡張機能 > Apps Script` からコンテナバインドされた Apps Script を作成する方法が最も安全です。
 
 基本的には `gas/Code.gs` を反映すれば動かせます。
 
 `gas/appsscript.json` は clasp で管理する場合や、Apps Script の manifest を明示的に編集したい場合だけ使います。Apps Script エディタ上で移植するだけなら無理に触る必要はありません。
 
-`gas/Code.gs` を反映したあと、Apps Script エディタで `setupProject()` を 1 回実行してください。これで `Slots`、`Reservations`、`Settings`、`Logs` の各シートと初期ヘッダが自動作成されます。
+`gas/Code.gs` を反映したあと、次のどちらかを 1 回実行してください。
+
+- Spreadsheet バインド型: `setupProject()`
+- スタンドアロン型: `setupProjectBySpreadsheetId('スプレッドシートID')`
+
+これで `Slots`、`Reservations`、`Settings`、`Logs` の各シートと初期ヘッダが自動作成されます。スタンドアロン型では Script Properties に `SPREADSHEET_ID` も保存され、その後の API 実行でも同じ Spreadsheet を参照します。
 
 ### Settings シート
 
