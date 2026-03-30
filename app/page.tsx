@@ -118,7 +118,7 @@ export default function HomePage() {
                     const hit = parsedReservations.find((r) => r.slotId === slot.slotId && overlaps(r.start, r.end, start, end));
                     const cls = hit ? (hit.status === 'BLOCKED' ? 'cell blocked' : 'cell reserved') : 'cell free';
                     const title = hit
-                      ? `${formatStatus(hit.status)} / ${hit.name || '-'} / 部屋:${hit.roomNumber || '-'}`
+                      ? `${formatStatus(hit.status)} / ${hit.name || '-'} / 部屋:${hit.roomNumber || '-'} / 車両:${hit.vehicleNumber || '-'}`
                       : '空き';
                     return <td key={`${slot.slotId}-${h.index}`} className={cls} title={title} />;
                   })}

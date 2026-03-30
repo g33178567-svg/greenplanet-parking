@@ -27,6 +27,7 @@ export default function ReservePage() {
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -65,6 +66,7 @@ export default function ReservePage() {
       name,
       contact,
       roomNumber,
+      vehicleNumber,
       note
     });
     if (!result.ok) {
@@ -128,6 +130,9 @@ export default function ReservePage() {
 
         <label htmlFor="roomNumber">部屋番号</label>
         <input id="roomNumber" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} required />
+
+        <label htmlFor="vehicleNumber">車両ナンバー</label>
+        <input id="vehicleNumber" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required />
 
         <label htmlFor="note">メモ</label>
         <textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} />

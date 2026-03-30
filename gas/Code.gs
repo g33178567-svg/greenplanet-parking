@@ -7,7 +7,7 @@ const FIXED_TIME_STEP_MIN = 30;
 const DEFAULT_ADMIN_KEY = 'admin1234';
 const SPREADSHEET_ID_PROPERTY = 'SPREADSHEET_ID';
 const SLOT_HEADERS = ['slotId', 'name', 'isActive'];
-const RESERVATION_HEADERS = ['id', 'slotId', 'startAt', 'endAt', 'status', 'name', 'contact', 'roomNumber', 'note', 'createdAt', 'canceledAt', 'createdBy', 'updatedAt'];
+const RESERVATION_HEADERS = ['id', 'slotId', 'startAt', 'endAt', 'status', 'name', 'contact', 'roomNumber', 'vehicleNumber', 'note', 'createdAt', 'canceledAt', 'createdBy', 'updatedAt'];
 const SETTINGS_HEADERS = ['key', 'value'];
 const LOG_HEADERS = ['id', 'at', 'actor', 'action', 'payloadJson'];
 const DEFAULT_SETTINGS_ROWS = [
@@ -204,6 +204,7 @@ function getAvailability_(dateStr) {
         status: r.status,
         name: r.name,
         roomNumber: r.roomNumber,
+        vehicleNumber: r.vehicleNumber,
         note: r.note
       };
     });
@@ -234,6 +235,7 @@ function createReservation_(input, actorType) {
       name: payload.name,
       contact: payload.contact,
       roomNumber: payload.roomNumber,
+      vehicleNumber: payload.vehicleNumber,
       note: payload.note || '',
       createdAt: now,
       canceledAt: '',
@@ -320,6 +322,7 @@ function adminBlock_(input) {
       name: 'BLOCK',
       contact: 'ADMIN',
       roomNumber: '-',
+      vehicleNumber: '-',
       note: input.reason || ''
     },
     settings
@@ -341,6 +344,7 @@ function adminBlock_(input) {
       name: 'BLOCK',
       contact: 'ADMIN',
       roomNumber: '-',
+      vehicleNumber: '-',
       note: payload.note || '',
       createdAt: now,
       canceledAt: '',
@@ -387,8 +391,9 @@ function validateCreateLikeInput_(input, settings) {
   const name = (input.name || '').toString().trim();
   const contact = (input.contact || '').toString().trim();
   const roomNumber = (input.roomNumber || '').toString().trim();
-  if (!name || !contact || !roomNumber) {
-    throw appError_('VALIDATION_ERROR', 'name, contact and roomNumber are required');
+  const vehicleNumber = (input.vehicleNumber || '').toString().trim();
+  if (!name || !contact || !roomNumber || !vehicleNumber) {
+    throw appError_('VALIDATION_ERROR', 'name, contact, roomNumber and vehicleNumber are required');
   }
 
   const isActive = isSlotActive_(slotId);
@@ -403,6 +408,7 @@ function validateCreateLikeInput_(input, settings) {
     name: name,
     contact: contact,
     roomNumber: roomNumber,
+    vehicleNumber: vehicleNumber,
     note: (input.note || '').toString().trim()
   };
 }
@@ -449,6 +455,8 @@ function appendReservationRow_(record) {
         return record.contact;
       case 'roomNumber':
         return record.roomNumber || '';
+      case 'vehicleNumber':
+        return record.vehicleNumber || '';
       case 'note':
         return record.note || '';
       case 'createdAt':
@@ -490,6 +498,7 @@ function getReservations_() {
         name: r.name || '',
         contact: r.contact || '',
         roomNumber: r.roomNumber || '',
+        vehicleNumber: r.vehicleNumber || '',
         note: r.note || '',
         createdAt: r.createdAt || '',
         canceledAt: r.canceledAt || '',
@@ -615,6 +624,7 @@ function serializeReservation_(r) {
     name: r.name,
     contact: r.contact,
     roomNumber: r.roomNumber,
+    vehicleNumber: r.vehicleNumber,
     note: r.note,
     createdAt: r.createdAt,
     canceledAt: r.canceledAt,

@@ -30,7 +30,7 @@ Google Spreadsheet に以下4シートを作成します。
 
 ヘッダ行:
 
-`id | slotId | startAt | endAt | status | name | contact | note | createdAt | canceledAt | createdBy | updatedAt`
+`id | slotId | startAt | endAt | status | name | contact | roomNumber | vehicleNumber | note | createdAt | canceledAt | createdBy | updatedAt`
 
 ### Settings
 

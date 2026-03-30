@@ -24,6 +24,7 @@ export type Reservation = {
   name: string;
   contact?: string;
   roomNumber?: string;
+  vehicleNumber?: string;
   note?: string;
   createdAt?: string;
   canceledAt?: string;

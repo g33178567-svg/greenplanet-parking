@@ -150,6 +150,7 @@ export default function AdminPage() {
                 <th>予約者名</th>
                 <th>連絡先</th>
                 <th>部屋番号</th>
+                <th>車両ナンバー</th>
                 <th>メモ</th>
               </tr>
             </thead>
@@ -164,6 +165,7 @@ export default function AdminPage() {
                   <td>{item.name || '-'}</td>
                   <td>{item.contact || '-'}</td>
                   <td>{item.roomNumber || '-'}</td>
+                  <td>{item.vehicleNumber || '-'}</td>
                   <td>{item.note || '-'}</td>
                 </tr>
               ))}
